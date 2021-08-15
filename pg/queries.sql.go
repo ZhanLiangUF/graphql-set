@@ -39,6 +39,7 @@ func (q *Queries) CreateSetData(ctx context.Context, arg CreateSetDataParams) er
 const getIntersectingSet = `-- name: GetIntersectingSet :one
 SELECT id, set_uid, intersectingset_uid FROM intersecting_sets
 WHERE set_uid = $1
+ORDER BY intersectingset_uid
 `
 
 func (q *Queries) GetIntersectingSet(ctx context.Context, setUid []byte) (IntersectingSet, error) {

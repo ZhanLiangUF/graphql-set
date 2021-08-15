@@ -23,7 +23,8 @@ VALUES ($1, $2);
 
 -- name: GetIntersectingSet :one
 SELECT * FROM intersecting_sets
-WHERE set_uid = $1;
+WHERE set_uid = $1
+ORDER BY intersectingset_uid;
 
 -- name: ListIntersectingSets :many
 SELECT * FROM intersecting_sets
