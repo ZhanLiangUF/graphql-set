@@ -1,0 +1,16 @@
+schema: schema.graphql
+exec:
+  filename: graph/exec.go
+model:
+  filename: graph/model.go
+resolver:
+  filename: graph/resolvers.go
+  type: Resolver
+
+models:
+  ID:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int64
+
+omit_slice_element_pointers: true

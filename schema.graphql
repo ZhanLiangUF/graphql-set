@@ -1,0 +1,16 @@
+type Set {
+  members: [Int!]!
+  intersectingSets: [Set!]!
+}
+
+type Query {
+  sets: [Set!]
+}
+
+input SetInput {
+  members: [Int!]!
+}
+
+type Mutation {
+  createSet(input: SetInput!): Set!
+}
