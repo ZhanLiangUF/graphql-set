@@ -46,7 +46,7 @@ func (r *repoSvc) CreateSet(ctx context.Context, setDatas []int64) (*Set, map[st
 	sort.Slice(setDatas, func(i, j int) bool {
 		return setDatas[i] < setDatas[j]
 	})
-	for i, _ := range setDatas {
+	for i := range setDatas {
 		buffer.WriteString(strconv.FormatInt(setDatas[i], 36))
 		buffer.WriteString(" ")
 	}
@@ -102,18 +102,25 @@ func (r *repoSvc) CreateSet(ctx context.Context, setDatas []int64) (*Set, map[st
 			}
 			if !contains(intersectingSets, setData.SetUid) {
 				i := sort.Search(len(setDatas), func(i int) bool { return setDatas[i] == setData.Data.Int64 })
-				if setDatas[i] == setData.Data.Int64 {
+				if len(setDatas) > i && setDatas[i] == setData.Data.Int64 {
 					intersectingSets = append(intersectingSets, setData.SetUid)
 				}
 			}
 		}
 		for _, setuid := range intersectingSets {
-			err := q.SetIntersectingSet(ctx, SetIntersectingSetParams{SetUid: res.SetUid, IntersectingsetUid: setuid})
-			if err != nil {
-				return err
+			if !bytes.Equal(res.SetUid, setuid) {
+				err := q.SetIntersectingSet(ctx, SetIntersectingSetParams{SetUid: res.SetUid, IntersectingsetUid: setuid})
+				if err != nil {
+					return err
+				}
+				// if a set is intersecting set of new created set then this created set is an intersecting set of the other set
+				err = q.SetIntersectingSet(ctx, SetIntersectingSetParams{SetUid: setuid, IntersectingsetUid: res.SetUid})
+				if err != nil {
+					return err
+				}
 			}
 		}
-		for k, _ := range m {
+		for k := range m {
 			decodeK, _ := hex.DecodeString(k)
 			if !contains(intersectingSets, decodeK) {
 				delete(m, k)
